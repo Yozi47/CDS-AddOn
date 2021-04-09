@@ -13,5 +13,10 @@ namespace CDS_AddOn
         {
 
         }
+
+        protected void PlanInspectorButton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("PlanTreeDiagram.aspx");
+        }
     }
 }

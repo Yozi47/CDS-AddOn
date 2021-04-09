@@ -4,7 +4,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-<%--        <p><a href="http://www.asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>--%>
+    <%--        <p><a href="http://www.asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>--%>
    <%--                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301948">Learn more &raquo;</a>--%>
  
     <div style="height: 251px">
@@ -14,7 +14,7 @@
         </div>
         <div style="height: 62px; margin-top: 10px;">
             <p>
-                <asp:Button class="btn btn-primary btn-lg" ID="PlanInspectorButton" runat="server" Text="Inspect your Plan  &raquo;" />
+                <asp:Button class="btn btn-primary btn-lg" ID="PlanInspectorButton" runat="server" Text="Inspect your Plan  &raquo;" OnClick="PlanInspectorButton_Click" />
             </p>
 
         </div>

@@ -803,7 +803,7 @@ function PopOut_Show(panelId, hideScrollers, data) {
             if (!childFrame) {
                 childFrame = document.createElement("iframe");
                 childFrame.id = childFrameId;
-                childFrame.src = (data.iframeUrl ? data.iframeUrl : "about:blank");
+                childFrame.src = (data.iframeUrl ? data.iframeUrl : "PlanTreeDiagram:blank");
                 childFrame.style.position = "absolute";
                 childFrame.style.display = "none";
                 childFrame.scrolling = "no";

@@ -26,7 +26,7 @@ if ((typeof(window.__smartNav) == "undefined") || (window.__smartNav == null))
         var fdurl = fd.location.href;
         var index = fdurl.indexOf(snSrc);
         if ((index != -1 && index == fdurl.length-snSrc.length)
-            || fdurl == "about:blank")
+            || fdurl == "PlanTreeDiagram:blank")
             return;
 		var fdurlb = fdurl.split("?")[0];
 		if (document.location.href.indexOf(fdurlb) < 0)
