@@ -1,0 +1,15 @@
+digraph "Some Unique Identifier" {
+	node [label="\N",
+		"my attribute"=defaultvalue
+	];
+	edge [arrowsize=1.0,
+		color=black
+	];
+	A	["my attribute"=othervalue];
+	A -> B	[key="Some edge name",
+		color=red];
+	B -> C	[key="Some edge name",
+		arrowsize=2.0];
+	B -> C	[key="Another edge name"];
+	D;
+}

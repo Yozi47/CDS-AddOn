@@ -10,7 +10,7 @@
     <div style="height: 251px">
         <h3> Select your plan to inspect.</h3>
         <div style="width: 193px; margin-left: 113px; height: 44px;">
-            <asp:DropDownList ID="PlanSelectorDropDownList"  runat="server" Width="174px"></asp:DropDownList> <%--TODO: Put the text in dropdown saying maybe " Choose your plan here" --%>
+            <asp:DropDownList ID="PlanSelectorDropDownList"  runat="server" Width="174px" AutoPostBack="True" OnSelectedIndexChanged="PlanSelectorDropDownList_SelectedIndexChanged"></asp:DropDownList> 
         </div>
         <div style="height: 62px; margin-top: 10px;">
             <p>

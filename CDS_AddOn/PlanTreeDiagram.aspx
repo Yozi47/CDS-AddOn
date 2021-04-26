@@ -3,10 +3,15 @@
 <%-- I am using this page to use graphics for making a tree diagram TODO: Rename the page --%>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <div style="height: 290px">
+    <div style="height: 548px">
     <h3> Showcase of the plan as a Tree Diagram.</h3>
-        <div style="width: 193px; margin-left: 113px; height: 44px;">
+        <div style="width: 616px; margin-left: 113px; height: 276px;">
             <%-- TODO: The graphics goes here --%>
+            <asp:Image ID="TreeDiagramImage" runat="server" ImageUrl="~/tree.svg" />
+        </div>
+        <div>
+            <p> The last selection from dropdown is <asp:Label ID="SelectionLabel" runat="server" ></asp:Label></p>
+
         </div>
         <div style="height: 62px; margin-top: 10px;">
              <div style="width: 226px">
