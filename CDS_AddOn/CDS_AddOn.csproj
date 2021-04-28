@@ -186,6 +186,8 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\SelectionSingleton.cs" />
+    <Compile Include="Controllers\TableToNodeConverter.cs" />
+    <Compile Include="Models\DBReader.cs" />
     <Compile Include="PlanTreeDiagram.aspx.cs">
       <DependentUpon>PlanTreeDiagram.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -243,7 +245,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

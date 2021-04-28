@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CDS_AddOn.Controllers;
+using CDS_AddOn.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -16,23 +18,20 @@ namespace CDS_AddOn
         {
             if (!IsPostBack)
             {
-                string constr = ConfigurationManager.ConnectionStrings["It4a_org"].ToString();
-                // connection string  
-                SqlConnection it4a_conn = new SqlConnection(constr);
-                it4a_conn.Open();
+                string progNameQuery = "Select distinct PROG_NAME, PROG_NUM from PROGRAM ";
+                DBReader reader = new DBReader(progNameQuery);
+                DataSet prog_name_container_ds = reader.GetTableData();
 
-                SqlCommand prog_name_cmd = new SqlCommand("Select distinct PROG_NAME, PROG_NUM from PROGRAM ", it4a_conn);
-                // table name   
-                SqlDataAdapter da = new SqlDataAdapter(prog_name_cmd);
-                DataSet prog_name_container_ds = new DataSet();
-                da.Fill(prog_name_container_ds);  // fill dataset  
                 PlanSelectorDropDownList.DataTextField = prog_name_container_ds.Tables[0].Columns["PROG_NAME"].ToString(); // text field name of table dispalyed in dropdown       
                 PlanSelectorDropDownList.DataValueField = prog_name_container_ds.Tables[0].Columns["PROG_NUM"].ToString();
                 // to retrive specific  textfield name   
                 PlanSelectorDropDownList.DataSource = prog_name_container_ds.Tables[0];      //assigning datasource to the dropdownlist  
                 PlanSelectorDropDownList.DataBind();  //binding dropdownlist  
+                PlanSelectorDropDownList.Items[0].Selected = true;
+                SelectionSingleton.DropdownSelection = PlanSelectorDropDownList.SelectedValue;
+
             }
-            
+
 
         }
 
@@ -43,7 +42,7 @@ namespace CDS_AddOn
 
         protected void PlanSelectorDropDownList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Controllers.SelectionSingleton.DropdownSelection = PlanSelectorDropDownList.SelectedValue; 
+            SelectionSingleton.DropdownSelection = PlanSelectorDropDownList.SelectedValue; 
         }
     }
 }

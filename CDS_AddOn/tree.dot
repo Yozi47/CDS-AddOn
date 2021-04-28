@@ -1,7 +1,5 @@
 digraph "Some Unique Identifier" {
-	node [label="\N",
-		"my attribute"=defaultvalue
-	];
+	node ["my attribute"=defaultvalue];
 	edge [arrowsize=1.0,
 		color=black
 	];
