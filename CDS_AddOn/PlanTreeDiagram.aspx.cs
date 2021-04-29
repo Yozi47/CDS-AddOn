@@ -23,11 +23,13 @@ namespace CDS_AddOn
                                                     "join PROGRAM p on p.PROG_NUM = cp.PROG_NUM \n" +
                                                     $"where p.PROG_NUM = '{ SelectionSingleton.DropdownSelection}'\n" +
                                                     "and c.COURSE_NUM in (Select course_num from prerequisite)";
-            string preReqQuery = "select C.COURSE_NUM, c.CREDIT_HRS, cp.CATEGORY, pr.pre_course, pr.option_num\n" +
+            string preReqQuery = "select C.COURSE_NUM, c.CREDIT_HRS, cp.CATEGORY, pr.pre_course, pr.option_num, pr.CREDIT_HRS as \"PreCourse_CrHrs\"\n" +
                                    "from COURSE_PROGRAM cp join COURSE c on cp.COURSE_NUM = c.COURSE_NUM\n" +
-                                        "join PROGRAM p on p.PROG_NUM = cp.PROG_NUM\n" +  
-                                        "join prerequisite pr on cp.COURSE_NUM = pr.course_num\n" +
-                                   $"where p.PROG_NUM = '{SelectionSingleton.DropdownSelection}'";
+                                        "join PROGRAM p on p.PROG_NUM = cp.PROG_NUM,\n" +
+                                        "	(Select p.pre_course, p.option_num, c.CREDIT_HRS, p.course_num\n" +
+                                        "	from prerequisite p join COURSE c on p.pre_course = c.COURSE_NUM) pr\n" +
+                                   $"where p.PROG_NUM = '{SelectionSingleton.DropdownSelection}'\n" +
+                                   "	and cp.COURSE_NUM = pr.course_num";
 
             string coursesWithoutPreReqQuery = "select C.COURSE_NUM, c.COURSE_NAME, c.CREDIT_HRS, cp.CATEGORY\n"+
                                                 "from COURSE_PROGRAM cp join COURSE c on cp.COURSE_NUM = c.COURSE_NUM\n"+
@@ -44,13 +46,13 @@ namespace CDS_AddOn
             SelectionSingleton.CoursesWithPreReqs = prgCourseReader.GetTableData();
             SelectionSingleton.PreReqLackingCourses = withoutPreCourseReader.GetTableData();
 
-            TableToNodeConverter.ConvertToNodes(SelectionSingleton.CoursesWithPreReqs, "COURSE_NUM", SelectionSingleton.PreExistingCourseCluster, "Cluster of Pre - Existing Courses");
-            TableToNodeConverter.ConvertToNodes(SelectionSingleton.PreReqLackingCourses, "COURSE_NUM", SelectionSingleton.PreReqsLackingCourseCluster, "Cluster of Pre-reqs Lacking Courses");
-            TableToNodeConverter.CreateEdgesWithPreReqs( "COURSE_NUM", "pre_course", SelectionSingleton.NonExistingCourseCluster, "Cluster of non - Existing Courses "); // TODO: Check for non existing pre-reqs with query not GraphViz Nodes
+            TableToNodeConverter.ConvertToNodes(SelectionSingleton.CoursesWithPreReqs, "COURSE_NUM", "CREDIT_HRS");
+            TableToNodeConverter.ConvertToNodes(SelectionSingleton.PreReqLackingCourses, "COURSE_NUM", "CREDIT_HRS");
+            TableToNodeConverter.CreateEdgesWithPreReqsV2( "COURSE_NUM", "pre_course", "CREDIT_HRS", "PreCourse_CrHrs"); // TODO: Check for non existing pre-reqs with query not GraphViz Nodes
             //TODO: Above line needs edit, should be non-existing prereqs..
+            TableToNodeConverter.ArrangeNoHeadsToNoTails();
 
-
-            TableToNodeConverter.CreateEdgesWithPreReqs("course_num", "COURSE_NUM", "pre_course");
+            //TableToNodeConverter.CreateEdgesWithPreReqs("course_num", "COURSE_NUM", "pre_course");
             TableToNodeConverter.FillSvg();
         }
 
