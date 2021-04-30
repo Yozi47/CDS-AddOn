@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using Rubjerg.Graphviz;
+using CDS_AddOn.Models;
 
 namespace CDS_AddOn.Controllers
 {
@@ -21,6 +22,7 @@ namespace CDS_AddOn.Controllers
 
         // Dictionary<Course Node,[Credit Hours, Head Count,Tail Count]> == Example => {{IT210:[4,2,3]}
         private static Dictionary<Node, int[]> nodesWithHeadsAndTailsCount = new Dictionary<Node, int[]>();
+        public static List<Course> listOfAllCourses = new List<Course>();
 
 
 
@@ -33,6 +35,7 @@ namespace CDS_AddOn.Controllers
                 Node existingCourseNode = root.GetOrAddNode(courseRow[nodeColumnName].ToString());
                 existingCourseNode.SafeSetAttribute("color", "green", "none");
                 AddToDataStructure(existingCourseNode, int.Parse(courseRow[nodeCrHrs].ToString()));
+                listOfAllCourses.Add(new Course(existingCourseNode, int.Parse(courseRow[nodeCrHrs].ToString())));
                 //clusterName.AddExisting(existingCourseNode);
                 //courseWithNoPrereqsCluster.AddExisting(existingCourseNode);
                 //existingCourseNode.Edges().Count();
@@ -40,44 +43,11 @@ namespace CDS_AddOn.Controllers
             rootHasValue = true;
                         
         }
-        //public static void CreateEdgesWithPreReqs(string preReqCourseNumColumnName, string allCoursesCourseNumColumnName, string preReqCoursePreCourseColumnName)
-        //{
 
-        //    DataTable preReqTable = SelectionSingleton.AllListedPrereqs.Tables[0];
-        //    foreach (DataRow courseRow in SelectionSingleton.CoursesWithPreReqs.Tables[0].Rows)
-        //    {
-        //        foreach (DataRow preReqRow in preReqTable.Rows)
-        //        {
-        //            if (courseRow[allCoursesCourseNumColumnName].ToString().Equals(preReqRow[preReqCourseNumColumnName].ToString()))
-        //            {
-        //                //AlignNodes(root.GetNode(courseRow[allCoursesCourseNumColumnName].ToString()));
-        //                if (!(root.GetNode(preReqRow[preReqCoursePreCourseColumnName].ToString()) is null))
-        //                {
-        //                    //AlignNodes(root.GetNode(preReqRow[preReqCoursePreCourseColumnName].ToString()));
-        //                    root.GetOrAddEdge(root.GetNode(preReqRow[preReqCoursePreCourseColumnName].ToString()),
-        //                                        root.GetNode(courseRow[allCoursesCourseNumColumnName].ToString()), "Pre-Req to");
-        //                }
-        //                else
-        //                {
-        //                    Node newPreReqCourseNode = root.GetOrAddNode(preReqRow[preReqCoursePreCourseColumnName].ToString());
-        //                    newPreReqCourseNode.SafeSetAttribute("color", "red", "none");
-        //                    //AlignNodes(newPreReqCourseNode);
-
-        //                    root.GetOrAddEdge(newPreReqCourseNode,
-        //                                      root.GetNode(courseRow[allCoursesCourseNumColumnName].ToString()), "Pre-Req to");
-        //                }
-        //            }
-        //        }
-        //    }
-        //    rootHasValue = true;
-
-        //}
-
-        public static void CreateEdgesWithPreReqsV2(string headColumnName, string tailColumnName, string headCrHrs, string tailCrHrs)
+        public static void CreateEdgesWithPreReqsV2(string headColumnName, string tailColumnName, string headCrHrs, string tailCrHrs, string optionNum)
         {
             DataTable preReqTable = SelectionSingleton.AllListedPrereqs.Tables[0];
             //setWithPreReqs = root.GetOrAddSubgraph(subGraphName);
-
             foreach (DataRow preReqRow in preReqTable.Rows)
             {
 
@@ -85,8 +55,9 @@ namespace CDS_AddOn.Controllers
                 if (!(root.GetNode(preReqRow[tailColumnName].ToString()) is null))
                 {
                     //AlignNodes(root.GetNode(preReqRow[preReqCoursePreCourseColumnName].ToString()));
-                    root.GetOrAddEdge(root.GetNode(preReqRow[tailColumnName].ToString()),
+                    Edge newEdge = root.GetOrAddEdge(root.GetNode(preReqRow[tailColumnName].ToString()),
                                         root.GetNode(preReqRow[headColumnName].ToString()), "Pre-Req to");
+                    newEdge.SafeSetAttribute("label", $"{preReqRow[optionNum]}", "");
                     ItsTail(root.GetNode(preReqRow[tailColumnName].ToString()), int.Parse(preReqRow[tailCrHrs].ToString()));
                     ItsHead(root.GetNode(preReqRow[headColumnName].ToString()), int.Parse(preReqRow[headCrHrs].ToString()));
 
@@ -95,10 +66,13 @@ namespace CDS_AddOn.Controllers
                 {
                     Node newPreReqCourseNode = root.GetOrAddNode(preReqRow[tailColumnName].ToString());
                     newPreReqCourseNode.SafeSetAttribute("color", "red", "none");
+                    listOfAllCourses.Add(new Course(newPreReqCourseNode, int.Parse(preReqRow[tailCrHrs].ToString())));
+
                     //AlignNodes(newPreReqCourseNode);
                     //setWithPreReqs.AddExisting(newPreReqCourseNode);
-                    root.GetOrAddEdge(newPreReqCourseNode,
+                    Edge newEdge = root.GetOrAddEdge(newPreReqCourseNode,
                                         root.GetNode(preReqRow[headColumnName].ToString()), "Pre-Req to");
+                    newEdge.SafeSetAttribute("label", $"{preReqRow[optionNum]}", "");
                     ItsTail(newPreReqCourseNode, int.Parse(preReqRow[tailCrHrs].ToString()));
                     ItsHead(root.GetNode(preReqRow[headColumnName].ToString()), int.Parse(preReqRow[headCrHrs].ToString()));
                 }
@@ -113,7 +87,7 @@ namespace CDS_AddOn.Controllers
             {
                 root.ComputeLayout();
                 root.ToDotFile(SelectionSingleton.treeDotPath);
-                root.ToPngFile(SelectionSingleton.treePngPath);
+                //root.ToPngFile(SelectionSingleton.treePngPath);
                 root.ToSvgFile(SelectionSingleton.treeSvgPath);
             }
             else
@@ -158,37 +132,152 @@ namespace CDS_AddOn.Controllers
 
         public static void ArrangeNoHeadsToNoTails()
         {
-            SubGraph noHeadsCluster = root.GetOrAddSubgraph("Cluster of Courses without Prereqs");
-            noHeadsCluster.SafeSetAttribute("label", "Cluster of Courses without Prereqs", "");
-            SubGraph someHeadsSomeTailsCluster = root.GetOrAddSubgraph("Cluster of Courses some connections both ways");
-            SubGraph noTailsCluster = root.GetOrAddSubgraph("Cluster of Courses that is not Pre-req to any other courses");
             SubGraph noHeadsNoTailsCluster = root.GetOrAddSubgraph("Cluster of Courses without any connections");
-            noHeadsNoTailsCluster.SafeSetAttribute("rank", "max", "same");
-            noHeadsCluster.SafeSetAttribute("rank", "min", "same"); // TODO: Try seperating min heads and tails with max heads and tails. It may clean it up a little.
-                                                                    // TODO: Find a way to bring subgraphs down. 
+            SubGraph withTailsOrHeads = root.GetOrAddSubgraph("Cluster of Courses with connections");
+            SubGraph noHeadsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses without Prereqs");
+            noHeadsCluster.SafeSetAttribute("label", "Cluster of Courses without Prereqs", "");
+            SubGraph someHeadsSomeTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses some connections both ways");
+            SubGraph noTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses that is not Pre-req to any other courses");
+
+
+            //noHeadsNoTailsCluster.SafeSetAttribute("rank", "max", "same");
+            //noHeadsCluster.SafeSetAttribute("rank", "min", "same"); // TODO: Try seperating min heads and tails with max heads and tails. It may clean it up a little.
+            // TODO: Find a way to bring subgraphs down. 
 
 
             foreach (Node course in nodesWithHeadsAndTailsCount.Keys)
             {
                
-                if(nodesWithHeadsAndTailsCount[course][1] == 0 && nodesWithHeadsAndTailsCount[course][2] > 0)
-                {
-                    noHeadsCluster.AddExisting(course);
-                }
-                else if (nodesWithHeadsAndTailsCount[course][1] > 0 && nodesWithHeadsAndTailsCount[course][2] == 0)
-                {
-                    noTailsCluster.AddExisting(course);
-
-                }
-                else if (nodesWithHeadsAndTailsCount[course][1] == 0 && nodesWithHeadsAndTailsCount[course][2] == 0)
+                
+                //else
+                if (nodesWithHeadsAndTailsCount[course][1] == 0 && nodesWithHeadsAndTailsCount[course][2] == 0)
                 {
                     noHeadsNoTailsCluster.AddExisting(course);
+                }
+                else
+                {
+                    withTailsOrHeads.AddExisting(course);
+                    //if (nodesWithHeadsAndTailsCount[course][1] == 0 && nodesWithHeadsAndTailsCount[course][2] > 0)
+                    //{
+                    //    noHeadsCluster.AddExisting(course);
+                    //}
+                    //else if (nodesWithHeadsAndTailsCount[course][1] >= 2 && nodesWithHeadsAndTailsCount[course][2] >=2)
+                    //{
+                    //    someHeadsSomeTailsCluster.AddExisting(course);
+                    //}
+                    //else if (nodesWithHeadsAndTailsCount[course][1] > 0 && nodesWithHeadsAndTailsCount[course][2] == 0)
+                    //{
+                    //    noTailsCluster.AddExisting(course);
+                    //}
                 }
 
             }
 
 
         }
+
+
+        public static void ConnectCourseWithBestPreReqSet(string headColumnName, string tailCrHrs, string headCrHrs) 
+        {
+            DataTable preReqTable = SelectionSingleton.AllListedPrereqs.Tables[0];
+            foreach (DataRow preReqRow in preReqTable.Rows)
+            {
+                string thisCourse = preReqRow[headColumnName].ToString();
+                List<string> bestSet = GetBestPreReqSetOf(thisCourse);
+                foreach(string course in bestSet)
+                {
+                    if (!(root.GetNode(course) is null))
+                    {
+                        root.GetOrAddEdge(root.GetNode(course),
+                                        root.GetNode(thisCourse), "Pre-Req to");
+                        ItsTail(root.GetNode(course), int.Parse(preReqRow[tailCrHrs].ToString()));
+                        ItsHead(root.GetNode(thisCourse), int.Parse(preReqRow[headCrHrs].ToString()));
+
+                    }
+                    else
+                    {
+                        Node newPreReqCourseNode = root.GetOrAddNode(course);
+                        newPreReqCourseNode.SafeSetAttribute("color", "red", "none");
+                        listOfAllCourses.Add(new Course(newPreReqCourseNode, int.Parse(preReqRow[tailCrHrs].ToString())));
+
+                        root.GetOrAddEdge(newPreReqCourseNode,
+                                            root.GetNode(thisCourse), "Pre-Req to");
+                        ItsTail(newPreReqCourseNode, int.Parse(preReqRow[tailCrHrs].ToString()));
+                        ItsHead(root.GetNode(thisCourse), int.Parse(preReqRow[headCrHrs].ToString()));
+                    }
+
+                }
+            }
+
+        }
+
+        private static List<string> GetBestPreReqSetOf(string thisCourse) 
+        {
+            List<string> theBestSet = new List<string>();
+            Dictionary<List<string>, double> setsOfPreReqs = GetMostUsedDataSets.GetListOfPreReqsFor(thisCourse);
+            Dictionary<List<string>, double> setsOfPreReqsSecondaryCheck = new Dictionary<List<string>, double>();
+            Dictionary<List<string>, double> setsOfPreReqsConstantCopy = new Dictionary<List<string>, double>(setsOfPreReqs);
+
+            int longestSet = 0;
+            foreach (List<string> setOfPreReqs in setsOfPreReqs.Keys)
+            {
+                if (setOfPreReqs.Count >= longestSet)
+                {
+                    longestSet = setOfPreReqs.Count;
+                }
+            }
+
+            foreach (List<string> setOfPreReqs in setsOfPreReqsConstantCopy.Keys)
+            {
+                foreach(string course in setOfPreReqs)
+                {
+                    if(!(root.GetNode(course) is null))
+                    {
+                        setsOfPreReqs[setOfPreReqs] += longestSet/setOfPreReqs.Count;
+                    }
+                }
+            }
+            setsOfPreReqsConstantCopy = new Dictionary<List<string>, double>(setsOfPreReqs);
+
+            double maxValue = setsOfPreReqs.Values.Max();
+            foreach (List<string> setOfPreReqs in setsOfPreReqsConstantCopy.Keys)
+            {
+                if(setsOfPreReqs[setOfPreReqs] >= maxValue)
+                {
+                    setsOfPreReqsSecondaryCheck.Add(setOfPreReqs, 1);
+                }
+            }
+            Dictionary<List<string>, double> setsOfPreReqsSecondaryCheckConstantCopy = new Dictionary<List<string>, double>(setsOfPreReqsSecondaryCheck);
+
+            foreach (List<string> secondSets in setsOfPreReqsSecondaryCheckConstantCopy.Keys)
+            {
+                foreach (string course in secondSets)
+                {
+                    List<string> heads = GetMostUsedDataSets.GetListOfCoursesWithPreReqOf(course);
+                    foreach(string headCourse in heads)
+                    {
+                        if (!(root.GetNode(headCourse) is null))
+                        {
+                            setsOfPreReqsSecondaryCheck[secondSets] += longestSet / secondSets.Count;
+                        }
+                    }
+                }
+
+            }
+            setsOfPreReqsSecondaryCheckConstantCopy = new Dictionary<List<string>, double>(setsOfPreReqsSecondaryCheck);
+            double secondaryMaxValue = setsOfPreReqsSecondaryCheckConstantCopy.Values.Max();
+            foreach (List<string> secondSets in setsOfPreReqsSecondaryCheckConstantCopy.Keys)
+            {
+                if(setsOfPreReqsSecondaryCheckConstantCopy[secondSets] >= secondaryMaxValue)
+                {
+                    theBestSet = secondSets;
+                }
+            }
+            return theBestSet;
+
+        }
+
+
         //public static void AlignNodes(Node aCourseNode)
         //{
         //    string courseCode = aCourseNode.GetName();
@@ -213,36 +302,6 @@ namespace CDS_AddOn.Controllers
 
         //}
 
-        //// You can programmatically construct graphs as follows
-        //RootGraph root = RootGraph.CreateNew("Some Unique Identifier", GraphType.Directed);
-
-        //// The node names are unique identifiers within a graph in Graphviz
-        //Node nodeA = root.GetOrAddNode("A");
-        //Node nodeB = root.GetOrAddNode("B");
-        //Node nodeC = root.GetOrAddNode("C");
-        //Node nodeD = root.GetOrAddNode("D");
-
-        //// The edge name is only unique between two nodes
-        //Edge edgeAB = root.GetOrAddEdge(nodeA, nodeB, "Some edge name");
-        //Edge edgeBC = root.GetOrAddEdge(nodeB, nodeC, "Some edge name");
-        //Edge anotherEdgeBC = root.GetOrAddEdge(nodeB, nodeC, "Another edge name");
-
-        //// We can attach attributes to nodes, edges and graphs to store information and instruct
-        //// graphviz by specifying layout parameters. At the moment we only support string
-        //// attributes. Cgraph assumes that all objects of a given kind (graphs/subgraphs, nodes,
-        //// or edges) have the same attributes. The attributes first have to be introduced for a
-        //// certain kind, before we can use it.
-        //Node.IntroduceAttribute(root, "my attribute", "defaultvalue");
-        //nodeA.SetAttribute("my attribute", "othervalue");
-
-        //// To introduce and set an attribute at the same time, there are convenience wrappers
-        //edgeAB.SafeSetAttribute("color", "red", "black");
-        //edgeBC.SafeSetAttribute("arrowsize", "2.0", "1.0");
-
-        //// We can simply export this graph to a text file in dot format
-        //root.ToDotFile(Controllers.SelectionSingleton.treeDotPath);
-        //root.ComputeLayout();
-        //root.ToSvgFile(Controllers.SelectionSingleton.treeSvgPath);
 
     }
 }

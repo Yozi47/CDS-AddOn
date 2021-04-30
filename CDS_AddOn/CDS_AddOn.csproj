@@ -50,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -127,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="PlanTreeDiagram.aspx" />
-    <Content Include="PlanBreakdown.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -187,7 +187,10 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\SelectionSingleton.cs" />
     <Compile Include="Controllers\TableToNodeConverter.cs" />
+    <Compile Include="Models\Course.cs" />
     <Compile Include="Models\DBReader.cs" />
+    <Compile Include="Models\GetMostUsedDataSets.cs" />
+    <Compile Include="Models\PreReqsTo.cs" />
     <Compile Include="PlanTreeDiagram.aspx.cs">
       <DependentUpon>PlanTreeDiagram.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -196,13 +199,6 @@
       <DependentUpon>PlanTreeDiagram.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="PlanBreakdown.aspx.cs">
-      <DependentUpon>PlanBreakdown.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="PlanBreakdown.aspx.designer.cs">
-      <DependentUpon>PlanBreakdown.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

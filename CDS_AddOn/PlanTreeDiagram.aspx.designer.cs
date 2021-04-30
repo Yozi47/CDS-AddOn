@@ -24,15 +24,6 @@ namespace CDS_AddOn
         protected global::System.Web.UI.WebControls.Image TreeDiagramImage;
 
         /// <summary>
-        /// SelectionLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label SelectionLabel;
-
-        /// <summary>
         /// GoBackButton control.
         /// </summary>
         /// <remarks>
@@ -42,12 +33,12 @@ namespace CDS_AddOn
         protected global::System.Web.UI.WebControls.Button GoBackButton;
 
         /// <summary>
-        /// SeeFourYearPlanButton control.
+        /// RealityVsYourPlanPlanButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SeeFourYearPlanButton;
+        protected global::System.Web.UI.WebControls.Button RealityVsYourPlanPlanButton;
     }
 }

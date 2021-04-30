@@ -27,6 +27,7 @@ namespace CDS_AddOn.Models
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataSet tableDS = new DataSet();
             da.Fill(tableDS);  // fill dataset
+            it4a_conn.Close();
             return tableDS;
         }
     }

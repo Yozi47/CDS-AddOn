@@ -3,28 +3,26 @@
 <%-- I am using this page to use graphics for making a tree diagram TODO: Rename the page --%>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <div style="height: 548px">
+    <div style="position:relative">
+        <div style="height: 548px; margin-left: 19px; margin-right: 64px; margin-top: 11px;">
     <h3> Showcase of the plan as a Tree Diagram.</h3>
-        <div style="width: 616px; margin-left: 113px; height: 276px;">
-            <%-- TODO: The graphics goes here --%>
+        <div style="width: 1255px; margin-left: 12px; height: 438px; overflow:auto">
             <asp:Image ID="TreeDiagramImage" runat="server" ImageUrl="~/tree.svg" />
-        </div>
-        <div>
-            <p> The last selection from dropdown is <asp:Label ID="SelectionLabel" runat="server" ></asp:Label></p>
-
-        </div>
-        <div style="height: 62px; margin-top: 10px;">
+        </div>    
+       
+       </div>
+    <div style="clear:both; position:relative">
+         <div style="height: 62px; margin-top: 10px; width: 1336px;">
              <div style="width: 226px">
-                <asp:Button class="btn btn-primary btn-lg" ID="GoBackButton" runat="server" Text="GO Back &raquo;" OnClick="GoBackButton_Click" />
-                 <%-- TODO: Add a backwards arrow --%>
-            
+                <asp:Button class="btn btn-primary btn-lg" ID="GoBackButton" runat="server" Text="&laquo; GO Back" OnClick="GoBackButton_Click" />            
              </div>
             
             <div style="width: 328px; margin-left: 397px; margin-top: -55px">
-                <asp:Button class="btn btn-primary btn-lg" ID="SeeFourYearPlanButton" runat="server" Text="See Four Year Plan  &raquo;" OnClick="SeeFourYearPlanButton_Click" />
+                <asp:Button class="btn btn-primary btn-lg" ID="RealityVsYourPlanPlanButton" runat="server" Text="Reality Vs Your Plan &raquo;" OnClick="RealityVsYourPlanPlanButton_Click" />
             </div>
 
         </div>
-       </div>
+    </div>
+    </div>
 
 </asp:Content>
