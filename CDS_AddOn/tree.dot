@@ -72,10 +72,6 @@ digraph "Courses Tree Diagrams" {
 		subgraph "Cluster of Courses without Prereqs" {
 			graph [label="Cluster of Courses without Prereqs"];
 		}
-		subgraph "Cluster of Courses some connections both ways" {
-		}
-		subgraph "Cluster of Courses that is not Pre-req to any other courses" {
-		}
 		"ACCT 210"	[_draw_="c 7 -#00ff00 e 265 178 51.19 18 ",
 			_ldraw_="F 14 11 -Times-Roman c 7 -#000000 T 265 174.3 0 63 8 -ACCT 210 ",
 			color=green,

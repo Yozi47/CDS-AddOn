@@ -12,14 +12,6 @@ namespace CDS_AddOn.Controllers
     {
         private static RootGraph root = RootGraph.CreateNew("Courses Tree Diagrams", GraphType.Directed);
 
-        //private static SubGraph courseWithNoPrereqsCluster = root.GetOrAddSubgraph("Cluster of Courses without Prereqs");
-        //private static SubGraph courseWithPrereqsCluster = root.GetOrAddSubgraph("Cluster of Courses with Prereqs");
-        //private static SubGraph course100LevelCluster = courseWithPrereqsCluster.GetOrAddSubgraph("Cluster of 100 Level");
-        //private static SubGraph course200LevelCluster = courseWithPrereqsCluster.GetOrAddSubgraph("Cluster of 200 Level");
-        //private static SubGraph course300LevelCluster = courseWithPrereqsCluster.GetOrAddSubgraph("Cluster of 300 Level");
-        //private static SubGraph course400LevelCluster = courseWithPrereqsCluster.GetOrAddSubgraph("Cluster of 400 Level");
-
-
         // Dictionary<Course Node,[Credit Hours, Head Count,Tail Count]> == Example => {{IT210:[4,2,3]}
         private static Dictionary<Node, int[]> nodesWithHeadsAndTailsCount = new Dictionary<Node, int[]>();
         public static List<Course> listOfAllCourses = new List<Course>();
@@ -36,9 +28,7 @@ namespace CDS_AddOn.Controllers
                 existingCourseNode.SafeSetAttribute("color", "green", "none");
                 AddToDataStructure(existingCourseNode, int.Parse(courseRow[nodeCrHrs].ToString()));
                 listOfAllCourses.Add(new Course(existingCourseNode, int.Parse(courseRow[nodeCrHrs].ToString())));
-                //clusterName.AddExisting(existingCourseNode);
-                //courseWithNoPrereqsCluster.AddExisting(existingCourseNode);
-                //existingCourseNode.Edges().Count();
+                
             }
             rootHasValue = true;
                         
@@ -136,8 +126,8 @@ namespace CDS_AddOn.Controllers
             SubGraph withTailsOrHeads = root.GetOrAddSubgraph("Cluster of Courses with connections");
             SubGraph noHeadsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses without Prereqs");
             noHeadsCluster.SafeSetAttribute("label", "Cluster of Courses without Prereqs", "");
-            SubGraph someHeadsSomeTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses some connections both ways");
-            SubGraph noTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses that is not Pre-req to any other courses");
+            //SubGraph someHeadsSomeTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses some connections both ways");
+            //SubGraph noTailsCluster = withTailsOrHeads.GetOrAddSubgraph("Cluster of Courses that is not Pre-req to any other courses");
 
 
             //noHeadsNoTailsCluster.SafeSetAttribute("rank", "max", "same");
@@ -227,6 +217,7 @@ namespace CDS_AddOn.Controllers
                 }
             }
 
+            //DFS
             foreach (List<string> setOfPreReqs in setsOfPreReqsConstantCopy.Keys)
             {
                 foreach(string course in setOfPreReqs)
@@ -248,7 +239,7 @@ namespace CDS_AddOn.Controllers
                 }
             }
             Dictionary<List<string>, double> setsOfPreReqsSecondaryCheckConstantCopy = new Dictionary<List<string>, double>(setsOfPreReqsSecondaryCheck);
-
+            //DFS
             foreach (List<string> secondSets in setsOfPreReqsSecondaryCheckConstantCopy.Keys)
             {
                 foreach (string course in secondSets)
@@ -276,32 +267,6 @@ namespace CDS_AddOn.Controllers
             return theBestSet;
 
         }
-
-
-        //public static void AlignNodes(Node aCourseNode)
-        //{
-        //    string courseCode = aCourseNode.GetName();
-        //    int courseLevel;
-        //    bool conversion = int.TryParse(courseCode.Substring(courseCode.Length - 3, 3), out courseLevel);
-        //    if ( conversion && courseLevel >= 400)
-        //    {
-        //        course400LevelCluster.AddExisting(aCourseNode);
-        //    }
-        //    else if (conversion && courseLevel >= 300)
-        //    {
-        //        course300LevelCluster.AddExisting(aCourseNode);
-        //    }
-        //    else if (conversion && courseLevel >= 200)
-        //    {
-        //        course200LevelCluster.AddExisting(aCourseNode);
-        //    }
-        //    else if (conversion && courseLevel > 0)
-        //    {
-        //        course100LevelCluster.AddExisting(aCourseNode);
-        //    }
-
-        //}
-
 
     }
 }
